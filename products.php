@@ -1,68 +1,33 @@
+<?php include("includes/header.php"); ?>
+<?php ("../config/db.php");
+
+<h2 class="mb-4">All Products</h1>
+
+<div class="row">
 
 <?php
-session_start();
-include("../config/db.php");
+$query = "SELECT * FROM products ORDER BY id DESC";
+$result = mysqli_query($conn, $query);
 
-// 🔐 Admin Protection
-if(!isset($_SESSION['admin'])){
-header("Location:index.php");
-exit;
-}
-
-// 🗑 Delete Product
-if(isset($_GET['delete'])){
-    $id = $_GET['delete'];
-    mysqli_query($conn, "DELETE FROM products WHERE id=$id");
-    header("Location: products.php");
-    exit;
-}
-
-// 📦 Fetch Products
-$result = mysqli_query($conn, "SELECT * FROM products");
+while($row = mysqli_fetch_assoc($result)) {
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Admin - Products</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="container mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <img src="assets/image/<?php echo $row['image']; ?>" class="card-img-top" height="250">
 
-<h2 class="mb-4">All Products</h2>
+            <div class="card-body">
+                <h5><?php echo $row['name']; ?></h5>
+                <p>₹<?php echo $row['price']; ?></p>
+                <a href="add_to_cart.php?id=<?php
+                echo$row['id']; ?>"
+                class="btn btn-primary">Add to Cart</a>
+            </div>
+        </div>
+    </div>
 
-<a href="add_product.php" class="btn btn-primary mb-3">+ Add New Product</a>
-<a href="logout.…
-<?php
+<?php } ?>
 
+</div>
 
-
-if(!isset($_SESSION['admin'])){
-    header("Location: index.php");
-    exit;
-}
-
-// Delete Product
-if(isset($_GET['delete'])){
-    $id = $_GET['delete'];
-
-    // Pehle image delete karo
-    $imgQuery = mysqli_query($conn, "SELECT image FROM products WHERE id=$id");
-    $imgData = mysqli_fetch_assoc($imgQuery);
-    unlink("../uploads/".$imgData['image']);
-
-    mysqli_query($conn, "DELETE FROM products WHERE id=$id");
-
-    header("Location: products.php");
-    exit;
-}
-
-$result = mysqli_query($conn, "SELECT * FROM products ORDER BY id DESC");
-?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Admin - Products</title>
-    <link rel="stylesheet
-     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<?php include("includes/footer.php"); 
